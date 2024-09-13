@@ -1,7 +1,6 @@
 use blake3::Hash;
 use std::{
-    fs::{self, File},
-    io::{BufReader, Read},
+    fs::{self},
     path::Path,
 };
 
@@ -50,11 +49,6 @@ mod tests {
 
     #[test]
     fn test_run_blaake3() {
-        use std::{
-            fs::File,
-            io::{BufReader, Read},
-        };
-
         //load then file contents
         let known_value: Vec<Vec<u8>> = vec![
             vec![
