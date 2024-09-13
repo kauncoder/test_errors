@@ -1,0 +1,50 @@
+name: CI
+
+# This workflow run tests and build for each push
+
+on:
+  push:
+    branches:
+      - master
+
+
+jobs:
+
+  build:
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Update local toolchain
+        run: |
+          rustup update
+          rustup component add clippy
+
+      - name: Install dependencies for windows
+        if: ${{ matrix.os == 'windows-latest'}}  
+        run: cargo install --path .
+
+      - name: Install dependencies for others
+        if: ${{ matrix.os != 'windows-latest'}}  
+        run: cargo build
+
+      - name: Lint
+        run: |
+          cargo fmt -- --check
+          cargo clippy -- -D warnings          
+
+      - name: Test
+        if: ${{ matrix.os != 'windows-latest'}}  
+        run: |
+          cargo check
+          cargo test --all          
+
+      - name: Build
+        run: |
+          cargo build --release

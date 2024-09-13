@@ -8,8 +8,6 @@ pub const OFFSET_ONE: [u8; 4] = 1u32.to_le_bytes();
 pub const TEST_FILE_PATH: &str = "./testfiles/test.txt";
 
 fn main() {
-    println!("testing hash functions");
-
     //load then file contents
     let file = File::open(TEST_FILE_PATH).unwrap();
     let mut reader = BufReader::new(file);
