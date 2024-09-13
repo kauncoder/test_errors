@@ -5,7 +5,7 @@ use std::{
 };
 
 pub const OFFSET_ONE: [u8; 4] = 1u32.to_le_bytes();
-pub const TEST_DIR: &str = "testfiles";
+pub const TEST_DIR: &str = "./testfiles";
 
 fn main() {
     let file_list: Vec<String> = get_file_list(TEST_DIR);
