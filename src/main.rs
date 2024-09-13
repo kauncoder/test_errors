@@ -1,6 +1,7 @@
 use blake3::Hash;
 use std::{
     fs::{self},
+    io::Read,
     path::Path,
 };
 
@@ -38,7 +39,12 @@ fn get_file_hashes(file_list: Vec<String>) -> (Vec<Hash>, Vec<Vec<u8>>) {
     let mut file_hash_list: Vec<Hash> = Vec::new();
     let mut file_content_list: Vec<Vec<u8>> = Vec::new();
     for file in file_list.clone() {
-        let file_content = std::fs::read(file.clone()).unwrap();
+        let mut file = fs::File::open(Path::new(&file)).unwrap();
+        let mut content = String::new();
+        file.read_to_string(&mut content).unwrap();
+        //remove windows carraige return from file \r
+        content = content.replace("\r", "");
+        let file_content = content.as_bytes().to_vec();
         file_content_list.push(file_content.clone());
         let mut hash = blake3::Hasher::new();
         hash.update(&OFFSET_ONE);
