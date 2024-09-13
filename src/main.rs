@@ -5,15 +5,19 @@ use std::{
 };
 
 pub const OFFSET_ONE: [u8; 4] = 1u32.to_le_bytes();
-pub const TEST_DIR: &str = "./testfiles";
+//pub const TEST_DIR: &str = "./testfiles";
 
 fn main() {
     let file_list: Vec<String> = get_file_list("testfiles_bad");
-    let file_hashes = get_file_hashes(file_list)
+    let (file_hash_list, file_content_list) = get_file_hashes(file_list);
+    let file_hashes = file_hash_list
         .iter()
         .map(|h| h.as_bytes().to_vec())
         .collect::<Vec<_>>();
-    println!("file hashes : {:?}", file_hashes);
+    println!(
+        "file contents :{:?} and hashes : {:?}",
+        file_content_list, file_hashes
+    );
 }
 
 fn get_file_list(upload_dir: &str) -> Vec<String> {
@@ -29,18 +33,20 @@ fn get_file_list(upload_dir: &str) -> Vec<String> {
     file_list
 }
 
-fn get_file_hashes(file_list: Vec<String>) -> Vec<Hash> {
+fn get_file_hashes(file_list: Vec<String>) -> (Vec<Hash>, Vec<Vec<u8>>) {
     //read files and return vec of file hashes
     let mut file_hash_list: Vec<Hash> = Vec::new();
+    let mut file_content_list: Vec<Vec<u8>> = Vec::new();
     for file in file_list.clone() {
         let file_content = std::fs::read(file.clone()).unwrap();
+        file_content_list.push(file_content.clone());
         let mut hash = blake3::Hasher::new();
         hash.update(&OFFSET_ONE);
         hash.update(&file_content);
         let hash = hash.finalize();
         file_hash_list.push(hash);
     }
-    file_hash_list
+    (file_hash_list, file_content_list)
 }
 
 #[cfg(test)] // This annotation ensures that the following code is only compiled when testing
@@ -61,7 +67,8 @@ mod tests {
             ],
         ];
         let file_list: Vec<String> = get_file_list("testfiles_good");
-        let computed_value = get_file_hashes(file_list)
+        let (computed_hashes, _) = get_file_hashes(file_list);
+        let computed_value = computed_hashes
             .iter()
             .map(|h| h.as_bytes().to_vec())
             .collect::<Vec<_>>();
@@ -71,6 +78,20 @@ mod tests {
     #[test]
     fn test_run_bad() {
         //load then file contents
+        let known_file_content: Vec<Vec<u8>> = vec![
+            vec![
+                116, 104, 105, 115, 32, 105, 115, 32, 97, 32, 115, 105, 109, 112, 108, 101, 32,
+                116, 120, 116, 32, 102, 105, 108, 101, 32, 116, 111, 32, 99, 104, 101, 99, 107, 32,
+                117, 112, 108, 111, 97, 100, 47, 100, 111, 119, 110, 108, 111, 97, 100, 10, 10,
+                110, 101, 119, 32, 108, 105, 110, 101,
+            ],
+            vec![
+                116, 104, 105, 115, 32, 105, 115, 32, 97, 32, 115, 105, 109, 112, 108, 101, 32,
+                116, 120, 116, 32, 102, 105, 108, 101, 32, 116, 111, 32, 99, 104, 101, 99, 107, 32,
+                117, 112, 108, 111, 97, 100, 47, 100, 111, 119, 110, 108, 111, 97, 100, 32, 50, 10,
+                10, 110, 101, 119, 32, 108, 105, 110, 101, 32, 50,
+            ],
+        ];
         let known_value: Vec<Vec<u8>> = vec![
             vec![
                 228, 101, 232, 48, 200, 194, 4, 2, 194, 119, 62, 73, 137, 5, 214, 56, 179, 176,
@@ -83,10 +104,13 @@ mod tests {
         ];
 
         let file_list: Vec<String> = get_file_list("testfiles_bad");
-        let computed_value = get_file_hashes(file_list)
+        let (computed_hashes, computed_contents) = get_file_hashes(file_list);
+        let computed_value = computed_hashes
             .iter()
             .map(|h| h.as_bytes().to_vec())
             .collect::<Vec<_>>();
+        assert_eq!(known_file_content, computed_contents);
         assert_eq!(known_value, computed_value);
+        //assert_eq!(known_value, computed_value);
     }
 }
