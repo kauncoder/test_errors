@@ -15,7 +15,7 @@ fn main() {
     reader.read_to_end(&mut contents).unwrap();
 
     let hasher_blake3 = blake3::Hasher::new();
-    let hash = run_blake3(hasher_blake3, contents);
+    let _hash = run_blake3(hasher_blake3, contents);
     //println!("hash value is : {:?}", hash.as_bytes().to_vec());
 }
 
@@ -35,7 +35,10 @@ mod tests {
 
         use crate::{run_blake3, TEST_FILE_PATH};
         //load then file contents
-        let known_value: Vec<u8> = vec![193, 147, 145, 5, 39, 26, 61, 181, 134, 92, 230, 178, 35, 170, 228, 50, 243, 230, 64, 67, 68, 239, 45, 57, 144, 224, 228, 243, 242, 180, 45, 51];
+        let known_value: Vec<u8> = vec![
+            193, 147, 145, 5, 39, 26, 61, 181, 134, 92, 230, 178, 35, 170, 228, 50, 243, 230, 64,
+            67, 68, 239, 45, 57, 144, 224, 228, 243, 242, 180, 45, 51,
+        ];
         let file = File::open(TEST_FILE_PATH).unwrap();
         let mut reader = BufReader::new(file);
         let mut contents = Vec::new();
