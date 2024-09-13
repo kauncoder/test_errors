@@ -16,7 +16,7 @@ fn main() {
 
     let hasher_blake3 = blake3::Hasher::new();
     let hash = run_blake3(hasher_blake3, contents);
-    println!("hash value is : {}", hash.to_hex());
+    //println!("hash value is : {:?}", hash.as_bytes().to_vec());
 }
 
 fn run_blake3(mut hasher: blake3::Hasher, contents: Vec<u8>) -> Hash {
@@ -35,8 +35,7 @@ mod tests {
 
         use crate::{run_blake3, TEST_FILE_PATH};
         //load then file contents
-        let known_value =
-            "c1939105271a3db5865ce6b223aae432f3e6404344ef2d3990e0e4f3f2b42d33".to_string();
+        let known_value: Vec<u8> = vec![193, 147, 145, 5, 39, 26, 61, 181, 134, 92, 230, 178, 35, 170, 228, 50, 243, 230, 64, 67, 68, 239, 45, 57, 144, 224, 228, 243, 242, 180, 45, 51];
         let file = File::open(TEST_FILE_PATH).unwrap();
         let mut reader = BufReader::new(file);
         let mut contents = Vec::new();
@@ -44,7 +43,7 @@ mod tests {
 
         let hasher_blake3 = blake3::Hasher::new();
         let hash = run_blake3(hasher_blake3, contents);
-        let computed_value = format!("{}", hash.to_hex());
+        let computed_value = hash.as_bytes().to_vec();
         assert_eq!(known_value, computed_value);
     }
 }
