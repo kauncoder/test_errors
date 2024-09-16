@@ -57,6 +57,7 @@ pub fn get_file_hashes(file_list: Vec<String>) -> (Vec<Hash>, Vec<Vec<u8>>) {
     }
     (file_hash_list, _file_content_list)
 }
+
 #[allow(dead_code)]
 pub fn get_file_hashes_with_cleaning(file_list: Vec<String>) -> (Vec<Hash>, Vec<Vec<u8>>) {
     //read files and return vec of file hashes
