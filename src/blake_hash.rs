@@ -85,7 +85,9 @@ mod tests {
     #[test]
     fn test_run_good_after_cleaning() {
         let known_value: Vec<String> = vec![
+            "929c621dbb080958e9f619d35365a1dd700cd9ae1493a42bc911b62c20af78f9".to_string(),
             "7f0c5586a42a297c2d89ef2a6120cb797713b9417d890a58c36f5005474c3f99".to_string(),
+            "0f50752d0560740475b9e619c5ca9ead1e6a50717f5f00ebca57743bb118a1c6".to_string(),
             "4219b2ccca8cf45cfef0799ae2dd7642df3b5cd2031b9ce130567ba21be5b75a".to_string(),
         ];
 
